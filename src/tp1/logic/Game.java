@@ -13,9 +13,10 @@ import tp1.logic.GameInterfaces.GameModel;
 import tp1.logic.GameInterfaces.GameStatus;
 import tp1.logic.GameInterfaces.GameWorld;
 
-
+//Clase game implementa las 3 interfaces que componen al game.
 public class Game implements GameModel, GameStatus, GameWorld{
 	
+	//Atributos
 	private GameObjectContainer gameObjects;
 	private Mario mario;
 	private int nLevel; 
@@ -24,21 +25,22 @@ public class Game implements GameModel, GameStatus, GameWorld{
 	private int lifes;
 	private boolean exitRequested;
 	private boolean exitedDoor;
+	//Dimensiones del tablero.
 	public static final int DIM_X = 30;
 	public static final int DIM_Y = 15;
 
 	
 	
 	//CONSTRUCTORA
-	public Game(int nLevel) { //se pasa al Game el nivel
+	public Game(int nLevel) { //se pasa al Game el nivel desde los argumentos que le pasamos al compilador.
 		this.nLevel = nLevel;
 		this.points = 0;
 		this.lifes = 3;
-		this.gameObjects = new GameObjectContainer();
+		this.gameObjects = new GameObjectContainer(); //Creamos un nuevo contenedor de objetos.
 		exitedDoor = false;
 		exitRequested = false;
 		
-		//iniciar el nivel
+		//iniciar el nivel dependiendo del número de nivel que hayamos metido.
 		if(nLevel == 0) initLevel0();
 		else if (nLevel == 1) initLevel1();
 		else if (nLevel == 2) initLevel2();
@@ -49,54 +51,60 @@ public class Game implements GameModel, GameStatus, GameWorld{
 	//MÉTODOS DE GAMEMODEL
 	
 	@Override
-	public boolean isFinished(){
+	public boolean isFinished(){ //El juego se termina si Mario sale por la ExitDoor, Mario muere porque (lifes = 0)
+		//O el comando "exit" ha sido ejecutado, que es una booleana que devuelve true en el game.
 		return (playerWins() || playerLoses() || exitRequested);
 	}
 	
 		//RESET DEL JUEGO
 	@Override
-	public void resetGame() { //reinicio del juego actual
+	public void resetGame() { //reinicio del juego actual con this.nlevel.
 		if(this.nLevel == 0) initLevel0();
 		else if(this.nLevel == 1) initLevel1();
 		else if (nLevel == 2) initLevel2();
 		else if(this.nLevel == -1) initLevelBlank();
 	}
 	@Override
-	public void resetGame(int newLevel) { //reinicio el juego que solicita el usuario
+	public void resetGame(int newLevel) { //reinicio del nivel que solicita el usuario con el número de nivel.
 		this.nLevel = newLevel;
 		
 		if(newLevel == 0) initLevel0();
 		else if(newLevel == 1) initLevel1();
-		else if (nLevel == 2) initLevel2();
+		else if (newLevel == 2) initLevel2();
 		else if (newLevel == -1)initLevelBlank();
 	}
 	
 		//UPDATE EL JUEGO
 	@Override
 	public void update() {
-		remainingTime--;
-		gameObjects.update();
+		remainingTime--; //Restamos el tiempo por cada iteración
+		gameObjects.update();//Y llamamos al GameObjectContainer para que actualice todos los objetos.
 	}
 	
 		//ACCIONES DE MARIO
 	@Override
-	public void addAction(Action act){
+	public void addAction(Action act){ //Lo llama ActionCommand para añadirle acciones a la lista de acciones
+		//a través de mario, si es que mario existe.
 		if(mario != null)
 			mario.addAction(act);
 	}
 		//EXIT
 	@Override
-	public void exit() {
+	public void exit() { //Lo llama exitCommand.
 		exitRequested = true;
 	}
 		//ADD OBJECT EN LA OBJECTCONTAINER LIST.
 	@Override
 
 	public GameObject parse(String[] objWords) {
+		//1º Creamos un Mario temporal en el caso que no exista (inItLevelBlank)
 		Mario tempMario = new Mario();
+		//2º Verificamos si el usuario quiere añadir un nuevo Mario, ya que su adición al juego se hace de forma diferente.
 		Mario newMario = tempMario.parse(objWords, this);
 		if (newMario != null)
+			//3º Si vamos a añadir un Mario, entonces llamamos a esta función
 			return marioParse (newMario);
+		//4º Si realmente el usuario no quería añadir un Mario, llamamos al parse de los demás objetos.
 		GameObject parsedObject = GameObjectFactory.parse(objWords, this);
 		return parsedObject;
 
@@ -105,12 +113,15 @@ public class Game implements GameModel, GameStatus, GameWorld{
 	//ese mario se tiene que eliminar de la lista de objetos
 	private Mario marioParse(Mario newMario) {
 		if(this.mario != null) {
+			//3.1º Si ya existe un Mario en el juego, lo quitamos
 			gameObjects.remove(this.mario);
 		}
+		//3.2º Halla existido o no this.mario, le asignamos un nuevo mario y se lo returneamos addObjectCommand.
 		this.mario = newMario;
 		return newMario;
 	}
 	
+	//Añadimos un objeto a la lista de objetos principal.
 	@Override
 	public void addGameObject(GameObject gameobject) {
 		gameObjects.add(gameobject);
@@ -122,10 +133,10 @@ public class Game implements GameModel, GameStatus, GameWorld{
 		//ESTADO DE LA PARTIDA
 	@Override
 	public boolean playerWins() {
-		return exitedDoor;
+		return exitedDoor; //El usuario gana si sale por la puerta (exitedDoor = true).
 	}
 	@Override
-	public boolean playerLoses() {
+	public boolean playerLoses() { //El usuario pierde si no tiene vidas o si se la acaba el tiempo.
 		return (lifes <= 0 || remainingTime <= 0);
 	}
 	
@@ -141,7 +152,7 @@ public class Game implements GameModel, GameStatus, GameWorld{
 	@Override
 	public String positionToString(int col, int row) { 
 		Position pos = new Position(row, col);
-		return gameObjects.positionToString(pos);
+		return gameObjects.positionToString(pos); //Devolvemos icono del objeto en su posición.
 	}
 	@Override
 	//devuelve los mensajes predeterminados ya formateados.
@@ -158,40 +169,40 @@ public class Game implements GameModel, GameStatus, GameWorld{
 	//MÉTODOS DE GAMEWORLD
 	@Override
 	public boolean isPosSolid(Position pos) {
-		return gameObjects.isPosSolid(pos);
+		return gameObjects.isPosSolid(pos); //Pregunta a los objetos si en una posición dada se encuentra un objeto sólido.
 	}
 	@Override
 	public void marioDies() {
-		lifes--;
+		lifes--; //Si mario muere ya sea si le ha matado goomba o si ha salido del tablero, le quitamos una vida y reiniciamos.
 		if (lifes != 0) resetGame();
 	}
 	@Override
 	public void marioExited() {
-		points = points + (remainingTime*10);
+		points = points + (remainingTime*10); //Le añadimos puntos por ganar.
 		remainingTime = 0;
-		reachedExit();
+		reachedExit(); //Indicamos que ha salido, exitDoor = true.
 	}
 	@Override
 	public void reachedExit() {
 		exitedDoor = true;
 	}
 	@Override
-	public void interact(GameItem other) { //es para que mario cuando haga su update() chequee si se ha chocado con algo (antes de hacer el update del resto)
+	public void interact(GameItem other) { //es para que mario cuando haga su update() verifique si se ha chocado con algo (antes de hacer el update del resto)
 		gameObjects.doInteraction(other);
 	}
 	@Override
 	public void incrPoints(int incr) {
-		points = points + incr;
+		points = points + incr; //sumamos puntos 
 	}
 	@Override
 	public void addNewObject(GameObject gameobject) {
-		gameObjects.toAdd(gameobject);
+		gameObjects.toAdd(gameobject);//Añadimos un objeto de la lista auxiliar de objetos por añadir a la lista de objetos.
 	}
 	
 	
 	
 	
-	//NIVELES
+	//NIVELES 0, 1, 2 y BLANK
 	private void initLevel0() {
 		this.nLevel = 0;
 		this.remainingTime = 100;
