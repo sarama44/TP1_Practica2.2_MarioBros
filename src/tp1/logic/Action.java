@@ -23,11 +23,6 @@ public enum Action {
 		return y;
 	}
 	
-    
-	public boolean equals(Action a) {//NUNCA utilizamos este método que compara acciones.
-		return ((x == a.getX())&&(y == a.getY()));
-	}
-	
 	@Override
 	public String toString() {//método Override de toString para imprimir mensaje de debug sobre qué acción tiene
 		//cada objeto en cada update. (AHORA NO LO ESTAMOS UTILIZANDO EN NINGÚN SITIO).
