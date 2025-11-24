@@ -9,6 +9,5 @@ public interface GameModel {
 	public void resetGame();
 	public void exit();
 	public void addAction(Action act);
-	public void addGameObject(GameObject gameobject);
-	public GameObject parse(String[] gameObjectDescription);
+	public GameObject addGameObject(String[] objWords);
 }

@@ -6,7 +6,7 @@ import tp1.view.Messages;
 import java.util.Arrays;
 import tp1.logic.gameobjects.GameObject;
 
-public class AddObjectCommand extends AbstractCommand{
+public class AddObjectCommand extends ParamsCommand{
 	private static final String NAME = Messages.COMMAND_ADDOBJECT_NAME;
 	private static final String SHORTCUT = Messages.COMMAND_ADDOBJECT_SHORTCUT;
 	private static final String DETAILS = Messages.COMMAND_ADDOBJECT_DETAILS;
@@ -19,9 +19,8 @@ public class AddObjectCommand extends AbstractCommand{
 	
 	public void execute(GameModel game, GameView view) {
 	    // GameModel (que es Game) tiene el método parse que usa GameObjectFactory internamente
-	    GameObject gameObject = game.parse(this.objectDescription);
+	    GameObject gameObject = game.addGameObject(this.objectDescription);
 	    if (gameObject != null) {
-	        game.addGameObject(gameObject);
 	        view.showGame();
 	    } else {
 	        view.showError("Invalid game object: " + String.join(" ", objectDescription));

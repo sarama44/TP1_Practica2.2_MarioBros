@@ -7,8 +7,8 @@ import tp1.view.Messages;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActionCommand extends AbstractCommand {
-	//Atributos para llamar a la constructora de la super.
+public class ActionCommand extends ParamsCommand {
+	//Atributos para llamar a la constructora de la super clase.
 	private static final String name = Messages.COMMAND_ACTION_NAME;
 	private static final String shortcut = Messages.COMMAND_ACTION_SHORTCUT;
 	private static final String details = Messages.COMMAND_ACTION_DETAILS;
@@ -29,29 +29,37 @@ public class ActionCommand extends AbstractCommand {
 	//métodos implementados de Command:
 	@Override
 	public void execute(GameModel game, GameView view) {
+		//1. Si la lista de acciones existe y no está vacía
 		if(actions != null && !(actions.isEmpty())) {
+			//2. Añadimos cada acción a la lista de acciones a través del Game.
 			for(Action action : actions)
-				game.addAction(action);//añadimos la acción a actionList a través de ga,e.
+				game.addAction(action);//añadimos la acción a actionList a través de game.
 		}
 		game.update();
 		view.showGame();
 	}
 	
 	@Override
-	public Command parse(String[] commandWords) {
+	public Command parse(String[] commandWords) { 
+		//1. El comando sabe verificarse a sí mismo
 		if(commandWords.length > 1 && matchCommandName(commandWords[0])){
+			//2. Si realmente se ha introducido este comando, creamos una lista de acciones.
 			List<Action> parsedActions = new ArrayList<>();
+			//3. Leemos todas las acciones introducidas por el usuario.
 	        for (int i = 1; i < commandWords.length; i++) {
+	        	//4. Llamamos al método auxiliar "parseAction" para poder añadir acciones de tipo action a la lista.
 	            Action action = parseAction(commandWords[i]);
 	            if (action != null) {
+	            	//5. Si hemos conseguido parsear la acción la añadimos a la lista
 	                parsedActions.add(action);
 	            }
 	        }
+	        //6. Devolvemos el comando a ejecutar con su lista de acciones
 	        return new ActionCommand(parsedActions);
 		}
 		return null;
 	}
-	//método adicional para devolver Strings como acciones (strToAction)
+	//método adicional para devolver Strings como acciones de todas las acciones del juego.
 	private Action parseAction (String actionStr) {
 		
 		String upperAction = actionStr.toUpperCase();
