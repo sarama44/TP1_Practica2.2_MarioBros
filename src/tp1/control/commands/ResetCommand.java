@@ -5,7 +5,7 @@ import tp1.view.Messages;
 
 //reset es un comando que puede aceptar parámetros, entonces hereda de AbstractCommand
 //en vez de heredar de NoParamsCommand.
-public class ResetCommand extends AbstractCommand{ 
+public class ResetCommand extends ParamsCommand{ 
 	   //declaramos los atributos necesarios para llamar a la super constructora:
 	
 	   private static final String NAME = Messages.COMMAND_RESET_NAME;

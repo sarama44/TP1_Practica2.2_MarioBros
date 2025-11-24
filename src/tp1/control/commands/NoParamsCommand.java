@@ -1,6 +1,6 @@
 package tp1.control.commands;
 
-public abstract class NoParamsCommand extends AbstractCommand {
+public abstract class NoParamsCommand extends ParamsCommand {
 
 	public NoParamsCommand(String name, String shortcut, String details, String help) {
 		super(name, shortcut, details, help);
